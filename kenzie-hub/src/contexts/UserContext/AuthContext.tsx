@@ -4,16 +4,18 @@ import { toast } from "react-toastify";
 import { ILoginPage } from "../../pages/LoginPage";
 import { IRegisterPage } from "../../pages/RegisterPage";
 import { api } from "../../services/api";
+import { IResponse, IUser, loginRequest } from "../../services/loginRequest ";
+import { registerRequest } from "../../services/registerRequest";
 
 interface IAuthenticationProviderProps {
   children: ReactNode;
 }
 
 interface IAuthenticationContext {
-  user: any;
-  userdata: any;
-  handleLogin: () => void;
-  handleRegister: () => void;
+  user: IResponse | [];
+  userdata: IResponse | [];
+  handleLogin: (data: ILoginPage) => Promise<void>;
+  handleRegister: (data: IRegisterPage) => Promise<void>;
   loading: boolean;
   userLogout: () => void;
 }
@@ -24,8 +26,8 @@ export const AuthenticationContext = createContext<IAuthenticationContext>(
 export const AuthenticationProvider = ({
   children,
 }: IAuthenticationProviderProps) => {
-  const [userdata, setUserData] = useState([]);
-  const [user, setUser] = useState(null);
+  const [userdata, setUserData] = useState<IResponse | []>([]);
+  const [user, setUser] = useState<IUser | []>({});
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -53,15 +55,9 @@ export const AuthenticationProvider = ({
 
   const handleLogin = async (data: ILoginPage) => {
     try {
-      const response = await api.post("/sessions", data);
-
-      window.localStorage.setItem("@KENZIEHUB:TOKEN", response.data.token);
-      const { user: userResponse, token } = response.data;
-
-      api.defaults.headers.authorization = ` Bearer ${token}`;
-
-      setUser(userResponse);
-      setUserData(userResponse);
+      const response = await loginRequest(data);
+      setUser(response.user);
+      setUserData(response);
       navigate("/dashbord", { replace: true });
     } catch (error: any) {
       console.error(error);
@@ -72,9 +68,9 @@ export const AuthenticationProvider = ({
     }
   };
 
-  const handleRegister = async (data: IRegisterPage) => {
+  const handleRegister = async (dataRegister: IRegisterPage) => {
     try {
-      const response = await api.post("/users", data);
+      const response = registerRequest(dataRegister);
       toast.success("Conta criada com sucesso!");
       navigate("/");
       console.log(response);
@@ -88,7 +84,7 @@ export const AuthenticationProvider = ({
   };
 
   const userLogout = () => {
-    setUser(null);
+    setUser([]);
     setLoading(false);
     localStorage.removeItem("@KENZIEHUB:TOKEN");
     navigate("/");
