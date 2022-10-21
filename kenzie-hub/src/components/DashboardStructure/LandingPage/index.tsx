@@ -5,7 +5,7 @@ import { StyledDiv } from "./style";
 export const LandingPage = () => {
   return (
     <StyledDiv>
-      <StyledTitleHTwo>Cadastre uma tecnologia</StyledTitleHTwo>
+      <StyledTitleHTwo fontSize={26}>Cadastre uma tecnologia</StyledTitleHTwo>
     </StyledDiv>
   );
 };

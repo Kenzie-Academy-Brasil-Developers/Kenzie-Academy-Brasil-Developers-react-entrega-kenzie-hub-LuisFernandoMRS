@@ -1,12 +1,30 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, ReactNode, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { ILoginPage } from "../../pages/LoginPage";
+import { IRegisterPage } from "../../pages/RegisterPage";
 import { api } from "../../services/api";
 
-export const AuthenticationContext = createContext({});
+interface IAuthenticationProviderProps {
+  children: ReactNode;
+}
 
-export const AuthenticationProvider = ({ children }) => {
-  const [userdata, setUserData] = useState();
+interface IAuthenticationContext {
+  user: any;
+  userdata: any;
+  handleLogin: () => void;
+  handleRegister: () => void;
+  loading: boolean;
+  userLogout: () => void;
+}
+
+export const AuthenticationContext = createContext<IAuthenticationContext>(
+  {} as IAuthenticationContext
+);
+export const AuthenticationProvider = ({
+  children,
+}: IAuthenticationProviderProps) => {
+  const [userdata, setUserData] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -33,7 +51,7 @@ export const AuthenticationProvider = ({ children }) => {
     loadUser();
   }, []);
 
-  const handleLogin = async (data) => {
+  const handleLogin = async (data: ILoginPage) => {
     try {
       const response = await api.post("/sessions", data);
 
@@ -45,7 +63,7 @@ export const AuthenticationProvider = ({ children }) => {
       setUser(userResponse);
       setUserData(userResponse);
       navigate("/dashbord", { replace: true });
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       toast.error(`${error.response.data.message}`, {
         position: toast.POSITION.TOP_RIGHT,
@@ -54,13 +72,13 @@ export const AuthenticationProvider = ({ children }) => {
     }
   };
 
-  const handleRegister = async (data) => {
+  const handleRegister = async (data: IRegisterPage) => {
     try {
       const response = await api.post("/users", data);
       toast.success("Conta criada com sucesso!");
       navigate("/");
       console.log(response);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       toast.error(`${error.response.data.message}`, {
         position: toast.POSITION.TOP_RIGHT,

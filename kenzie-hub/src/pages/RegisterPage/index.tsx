@@ -24,13 +24,23 @@ import { ButtonRegister } from "../../components/Button";
 import { useContext } from "react";
 import { AuthenticationContext } from "../../contexts/UserContext/AuthContext";
 
+export interface IRegisterPage {
+  name: string;
+  email: string;
+  password: string;
+  confirmpassword: string;
+  bio: string;
+  contact: string;
+  course_module: string;
+}
+
 export const RegisterPage = () => {
   const { handleRegister } = useContext(AuthenticationContext);
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<IRegisterPage>({
     resolver: yupResolver(formRegisterSchema),
   });
 

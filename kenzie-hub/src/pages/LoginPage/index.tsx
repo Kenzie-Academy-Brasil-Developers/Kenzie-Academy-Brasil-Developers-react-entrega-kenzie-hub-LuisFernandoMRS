@@ -19,6 +19,11 @@ import { Label } from "../../components/Label";
 import { Button } from "../../components/Button";
 import { StyledInput } from "../../components/Input/style";
 
+export interface ILoginPage {
+  email: string;
+  password: string;
+}
+
 export const LoginPage = () => {
   const { handleLogin } = useContext(AuthenticationContext);
 
@@ -26,7 +31,7 @@ export const LoginPage = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<ILoginPage>({
     resolver: yupResolver(formLoginSchema),
   });
 
@@ -40,7 +45,9 @@ export const LoginPage = () => {
           height={50}
         />
         <StyledDiv>
-          <StyledTitleOne color="#fff">Login</StyledTitleOne>
+          <StyledTitleOne fontSize={24} color="#fff">
+            Login
+          </StyledTitleOne>
           <Form onSubmit={handleSubmit(handleLogin)}>
             <Label htmlFor="email">Email</Label>
             <StyledInput
