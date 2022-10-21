@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -6,18 +7,20 @@ import { IRegisterPage } from "../../pages/RegisterPage";
 import { api } from "../../services/api";
 import { IResponse, IUser, loginRequest } from "../../services/loginRequest ";
 import { registerRequest } from "../../services/registerRequest";
-
+import axios from "axios";
+import { autoLogin } from "../../services/autoLogin";
 interface IAuthenticationProviderProps {
   children: ReactNode;
 }
 
 interface IAuthenticationContext {
-  user: IResponse | [];
-  userdata: IResponse | [];
-  handleLogin: (data: ILoginPage) => Promise<void>;
-  handleRegister: (data: IRegisterPage) => Promise<void>;
+  user: IResponse | {};
+  handleLogin: (dataLogin: ILoginPage) => Promise<void>;
+  handleRegister: (dataRegister: IRegisterPage) => Promise<void>;
   loading: boolean;
   userLogout: () => void;
+  currentModal: boolean;
+  setCurrentModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const AuthenticationContext = createContext<IAuthenticationContext>(
@@ -26,23 +29,26 @@ export const AuthenticationContext = createContext<IAuthenticationContext>(
 export const AuthenticationProvider = ({
   children,
 }: IAuthenticationProviderProps) => {
-  const [userdata, setUserData] = useState<IResponse | []>([]);
-  const [user, setUser] = useState<IUser>({} as IUser);
+  const [user, setUser] = useState<IUser | {}>({} as IUser);
+  const [currentModal, setCurrentModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     async function loadUser() {
       const token = localStorage.getItem("@KENZIEHUB:TOKEN");
-
       if (token) {
         try {
-          api.defaults.headers.authorization = ` Bearer ${token}`;
-
-          const { data } = await api.get("/profile");
-
-          setUser(data);
+          api.defaults.headers.common.authorization = ` Bearer ${token}`;
+          const response = await autoLogin();
+          setUser(response);
         } catch (error) {
+          if (axios.isAxiosError(error)) {
+            toast.error(`${error.response?.data.message}`, {
+              position: toast.POSITION.TOP_RIGHT,
+              toastId: 1,
+            });
+          }
           console.error(error);
           localStorage.removeItem("@KENZIEHUB:TOKEN");
           navigate("/");
@@ -57,14 +63,16 @@ export const AuthenticationProvider = ({
     try {
       const response = await loginRequest(data);
       setUser(response.user);
-      setUserData(response);
+
       navigate("/dashbord", { replace: true });
-    } catch (error: any) {
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(`${error.response?.data.message}`, {
+          position: toast.POSITION.TOP_RIGHT,
+          toastId: 1,
+        });
+      }
       console.error(error);
-      toast.error(`${error.response.data.message}`, {
-        position: toast.POSITION.TOP_RIGHT,
-        toastId: 1,
-      });
     }
   };
 
@@ -74,17 +82,19 @@ export const AuthenticationProvider = ({
       toast.success("Conta criada com sucesso!");
       navigate("/");
       console.log(response);
-    } catch (error: any) {
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(`${error.response?.data.message}`, {
+          position: toast.POSITION.TOP_RIGHT,
+          toastId: 1,
+        });
+      }
       console.error(error);
-      toast.error(`${error.response.data.message}`, {
-        position: toast.POSITION.TOP_RIGHT,
-        toastId: 1,
-      });
     }
   };
 
   const userLogout = () => {
-    setUser([]);
+    setUser({});
     setLoading(false);
     localStorage.removeItem("@KENZIEHUB:TOKEN");
     navigate("/");
@@ -94,11 +104,12 @@ export const AuthenticationProvider = ({
     <AuthenticationContext.Provider
       value={{
         user,
-        userdata,
         handleLogin,
         handleRegister,
         loading,
         userLogout,
+        currentModal,
+        setCurrentModal,
       }}
     >
       {children}

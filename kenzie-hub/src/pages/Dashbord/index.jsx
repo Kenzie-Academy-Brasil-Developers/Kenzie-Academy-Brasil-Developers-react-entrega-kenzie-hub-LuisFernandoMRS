@@ -9,12 +9,11 @@ export const Dashbord = () => {
 
   return (
     <>
-      <Nav />
-
-      {user.length === 0 ? (
+      {!user.techs ? (
         <h1>loading</h1>
       ) : (
         <>
+          <Nav />
           <Header />
           <AllStructureDashbord />
         </>

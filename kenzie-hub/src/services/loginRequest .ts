@@ -1,7 +1,7 @@
 import { ILoginPage } from "../pages/LoginPage";
 import { api } from "./api";
 
-interface ITech {
+export interface ITech {
   id: string;
   status: string;
   title: string;
@@ -22,7 +22,9 @@ export interface IResponse {
   user: IUser;
 }
 
-export const loginRequest = async (dataLogin: ILoginPage) => {
+export const loginRequest = async (
+  dataLogin: ILoginPage
+): Promise<IResponse> => {
   const { data } = await api.post<IResponse>("/sessions", dataLogin);
   const { token } = data;
   window.localStorage.setItem("@KENZIEHUB:TOKEN", data.token);

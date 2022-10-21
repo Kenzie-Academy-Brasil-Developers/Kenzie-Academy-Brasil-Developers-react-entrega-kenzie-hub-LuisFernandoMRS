@@ -6,23 +6,25 @@ import { Label } from "../../Label";
 import { StyledDiv, StyledModalDiv, StyledSelect } from "./style";
 import { formTechSchema } from "../../../validation";
 
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { TechsContext } from "../../../contexts/TechsContext/TechsContext";
-import { ModalContext } from "../../../contexts/ModalContext/ModalContext";
+
 import { StyledTitleHTwo } from "../../../styles/typography";
+import { useClickClose } from "../../../hook/useClickClose";
+import { AuthenticationContext } from "../../../contexts/UserContext/AuthContext";
+
+export interface IDataCreateTech {
+  title: string;
+  status: string;
+}
+
 export const ModalRegisterTech = () => {
+  const { setCurrentModal } = useContext(AuthenticationContext);
   const { createTech } = useContext(TechsContext);
-  const { setCurrentModal, handleOutClick, modalRef } =
-    useContext(ModalContext);
-
-  useEffect(() => {
-    document.addEventListener("mousedown", handleOutClick);
-    return () => {
-      document.removeEventListener("mousedown", handleOutClick);
-    };
-  }, []);
-
-  const { register, handleSubmit } = useForm({
+  const modalRef = useClickClose(() => {
+    setCurrentModal(false);
+  });
+  const { register, handleSubmit } = useForm<IDataCreateTech>({
     resolver: yupResolver(formTechSchema),
   });
 
@@ -30,8 +32,8 @@ export const ModalRegisterTech = () => {
     <StyledModalDiv>
       <StyledDiv ref={modalRef}>
         <div>
-          <StyledTitleHTwo>cadastrar Tecnologia</StyledTitleHTwo>
-          <button type="button" onClick={() => setCurrentModal(null)}>
+          <StyledTitleHTwo fontSize={24}>cadastrar Tecnologia</StyledTitleHTwo>
+          <button type="button" onClick={() => setCurrentModal(true)}>
             x
           </button>
         </div>
