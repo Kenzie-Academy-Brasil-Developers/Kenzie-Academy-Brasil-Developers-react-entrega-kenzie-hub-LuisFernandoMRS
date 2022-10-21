@@ -27,7 +27,7 @@ export const AuthenticationProvider = ({
   children,
 }: IAuthenticationProviderProps) => {
   const [userdata, setUserData] = useState<IResponse | []>([]);
-  const [user, setUser] = useState<IUser | []>({});
+  const [user, setUser] = useState<IUser>({} as IUser);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
