@@ -1,9 +1,10 @@
 import { useContext } from "react";
-import { DashbordContext } from "../../../contexts/DashbordContext/DashbordContext";
+import { AuthenticationContext } from "../../../contexts/UserContext/AuthContext";
+
 import { StyledHeadline, StyledTitleOne } from "../../../styles/typography";
 
 export const UserInformation = () => {
-  const { user } = useContext(DashbordContext);
+  const { user } = useContext(AuthenticationContext);
 
   return (
     <div>
