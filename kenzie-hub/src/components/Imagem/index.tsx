@@ -1,8 +1,8 @@
 import { StyledImg } from "./style";
 
 interface IImgProps {
-  height: number;
-  width: number;
+  height?: number;
+  width?: number;
   alt: string | undefined;
   src: string;
 }

@@ -9,7 +9,7 @@ export const Dashbord = () => {
 
   return (
     <>
-      {!user.techs ? (
+      {!user ? (
         <h1>loading</h1>
       ) : (
         <>

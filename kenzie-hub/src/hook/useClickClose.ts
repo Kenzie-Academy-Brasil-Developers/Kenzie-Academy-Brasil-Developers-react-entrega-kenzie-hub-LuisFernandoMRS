@@ -1,9 +1,14 @@
 import { useEffect, useRef } from "react";
+import { IRef } from "../components/Modal/RegisterTech";
 
-export const useClickClose = (callback: any) => {
-  const ref = useRef();
+interface ICallback {
+  callback: () => void;
+}
+
+export const useClickClose = (callback: () => void) => {
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    function handleOutClick(e: Event) {
+    function handleOutClick(e: MouseEvent) {
       const target = e.target as HTMLDivElement;
       if (!ref?.current?.contains(target)) {
         callback();
@@ -13,6 +18,7 @@ export const useClickClose = (callback: any) => {
     return () => {
       document.removeEventListener("mousedown", handleOutClick);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return ref;

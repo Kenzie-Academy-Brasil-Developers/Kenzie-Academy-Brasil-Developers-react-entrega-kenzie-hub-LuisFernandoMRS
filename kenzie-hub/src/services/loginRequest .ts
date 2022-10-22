@@ -14,7 +14,7 @@ export interface IUser {
   course_module: string;
   contact: string;
   bio: string;
-  techs: ITech[];
+  techs: ITech[] | {};
 }
 
 export interface IResponse {

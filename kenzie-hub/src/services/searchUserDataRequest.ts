@@ -1,7 +1,17 @@
 import { api } from "./api";
-import { IResponse } from "./loginRequest ";
+
+interface ISearch {
+  techs: [
+    {
+      id: string;
+      status: string;
+      title: string;
+    }
+  ];
+}
 
 export const searchUserDataRequest = async () => {
-  const { data } = await api.get<IResponse>("/profile");
-  return data.user.techs;
+  const { data } = await api.get<ISearch>("/profile");
+
+  return data;
 };

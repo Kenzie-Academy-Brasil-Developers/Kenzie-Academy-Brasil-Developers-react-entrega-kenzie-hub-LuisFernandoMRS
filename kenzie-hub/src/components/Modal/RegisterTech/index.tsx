@@ -18,6 +18,15 @@ export interface IDataCreateTech {
   status: string;
 }
 
+export interface IRef {
+  ref?:
+    | ((instance: HTMLDivElement | null) => void)
+    | React.RefObject<HTMLDivElement>
+    | null
+    | undefined
+    | string;
+}
+
 export const ModalRegisterTech = () => {
   const { setCurrentModal } = useContext(AuthenticationContext);
   const { createTech } = useContext(TechsContext);

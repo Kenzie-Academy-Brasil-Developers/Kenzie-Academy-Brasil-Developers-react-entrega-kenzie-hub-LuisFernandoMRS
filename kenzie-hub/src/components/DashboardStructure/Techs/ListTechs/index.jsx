@@ -12,7 +12,7 @@ export const ListTechs = () => {
   }, [techs]);
   return (
     <>
-      {techs.length === 0 ? (
+      {!techs ? (
         <LandingPage />
       ) : (
         <StyledUl>
