@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { ILoginPage } from "../../pages/LoginPage";
 import { IRegisterPage } from "../../pages/RegisterPage";
 import { api } from "../../services/api";
-import { IResponse, IUser, loginRequest } from "../../services/loginRequest ";
+import { IUser, loginRequest } from "../../services/loginRequest ";
 import { registerRequest } from "../../services/registerRequest";
 import axios from "axios";
 import { autoLogin } from "../../services/autoLogin";
@@ -14,7 +14,7 @@ interface IAuthenticationProviderProps {
 }
 
 interface IAuthenticationContext {
-  user: IResponse | {};
+  user: IUser | null;
   handleLogin: (dataLogin: ILoginPage) => Promise<void>;
   handleRegister: (dataRegister: IRegisterPage) => Promise<void>;
   loading: boolean;
@@ -29,7 +29,7 @@ export const AuthenticationContext = createContext<IAuthenticationContext>(
 export const AuthenticationProvider = ({
   children,
 }: IAuthenticationProviderProps) => {
-  const [user, setUser] = useState<IUser | {}>({} as IUser);
+  const [user, setUser] = useState<IUser | null>({} as IUser);
   const [currentModal, setCurrentModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ export const AuthenticationProvider = ({
         try {
           api.defaults.headers.common.authorization = ` Bearer ${token}`;
           const response = await autoLogin();
-          setUser(response);
+          setUser(response.user);
         } catch (error) {
           if (axios.isAxiosError(error)) {
             toast.error(`${error.response?.data.message}`, {
@@ -94,7 +94,7 @@ export const AuthenticationProvider = ({
   };
 
   const userLogout = () => {
-    setUser({});
+    setUser(null);
     setLoading(false);
     localStorage.removeItem("@KENZIEHUB:TOKEN");
     navigate("/");
