@@ -1,17 +1,7 @@
+import { IUser } from "../contexts/UserContext/AuthContext";
 import { api } from "./api";
 
-interface ISearch {
-  techs: [
-    {
-      id: string;
-      status: string;
-      title: string;
-    }
-  ];
-}
-
-export const searchUserDataRequest = async () => {
-  const { data } = await api.get<ISearch>("/profile");
-
+export const searchUserDataRequest = async (): Promise<IUser> => {
+  const { data } = await api.get<IUser>("/profile");
   return data;
 };

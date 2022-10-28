@@ -1,5 +1,8 @@
 import { useContext } from "react";
-import { AuthenticationContext } from "../../contexts/UserContext/AuthContext";
+import {
+  AuthenticationContext,
+  IUserLogin,
+} from "../../contexts/UserContext/AuthContext";
 import { Form } from "../../components/Form";
 import { Main } from "../../components/Main";
 import {
@@ -19,11 +22,6 @@ import { Label } from "../../components/Label";
 import { Button } from "../../components/Button";
 import { StyledInput } from "../../components/Input/style";
 
-export interface ILoginPage {
-  email: string;
-  password: string;
-}
-
 export const LoginPage = () => {
   const { handleLogin } = useContext(AuthenticationContext);
 
@@ -31,7 +29,7 @@ export const LoginPage = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ILoginPage>({
+  } = useForm<IUserLogin>({
     resolver: yupResolver(formLoginSchema),
   });
 

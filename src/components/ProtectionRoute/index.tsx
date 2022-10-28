@@ -4,8 +4,9 @@ import { AuthenticationContext } from "../../contexts/UserContext/AuthContext";
 
 export const ProtectionRoute = () => {
   const { user, loading } = useContext(AuthenticationContext);
+
   if (loading) {
     return null;
   }
-  return <>{user ? <Outlet /> : <Navigate to={"/"} replace />}</>;
+  return <>{user ? <Outlet /> : <Navigate to={"/"} replace />} </>;
 };

@@ -1,18 +1,22 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 import { toast } from "react-toastify";
 import { api } from "../../services/api";
 import { createTechRequest } from "../../services/createTechRequest";
-import { ITech } from "../../services/loginRequest ";
 import axios from "axios";
 import { searchUserDataRequest } from "../../services/searchUserDataRequest";
-import { IDataCreateTech } from "../../components/Modal/RegisterTech";
+import { ITech, IUser } from "../UserContext/AuthContext";
+
+export interface ICreateTechs {
+  title: string;
+  status: string;
+}
 
 interface ITechsContext {
   techs: ITech[];
   searchUserData: () => void;
-  createTech: (data: IDataCreateTech) => Promise<void>;
-  deleteTech: (id_Tech: string) => Promise<void>;
+  createTech: (data: ICreateTechs) => void;
+  deleteTech: (id_Tech: string) => void;
 }
 
 interface ITechsProps {
@@ -22,19 +26,19 @@ interface ITechsProps {
 export const TechsContext = createContext<ITechsContext>({} as ITechsContext);
 
 export const TechsProvider = ({ children }: ITechsProps) => {
-  const [techs, setTechs] = useState<ITech[] | []>([]);
+  const [techs, setTechs] = useState<ITech[]>([] as ITech[]);
 
   const searchUserData = async () => {
     try {
       const response = await searchUserDataRequest();
 
-      setTechs(response.techs);
+      setTechs(response.techs!);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const createTech = async (data: IDataCreateTech) => {
+  const createTech = async (data: ICreateTechs) => {
     try {
       // eslint-disable-next-line no-unused-vars
       const response = await createTechRequest(data);
@@ -56,10 +60,10 @@ export const TechsProvider = ({ children }: ITechsProps) => {
   const deleteTech = async (id_Tech: string) => {
     try {
       // eslint-disable-next-line no-unused-vars
-      const response = await api.delete(`/users/techs/${id_Tech}`);
+      const response = await api.delete<ITech>(`/users/techs/${id_Tech}`);
 
       const removeTech = techs.filter(
-        (techRemove) => techRemove.id !== id_Tech
+        (techRemove: ITech) => techRemove.id !== id_Tech
       );
 
       setTechs(removeTech);

@@ -7,25 +7,14 @@ import { StyledDiv, StyledModalDiv, StyledSelect } from "./style";
 import { formTechSchema } from "../../../validation";
 
 import { useContext } from "react";
-import { TechsContext } from "../../../contexts/TechsContext/TechsContext";
+import {
+  ICreateTechs,
+  TechsContext,
+} from "../../../contexts/TechsContext/TechsContext";
 
 import { StyledTitleHTwo } from "../../../styles/typography";
 import { useClickClose } from "../../../hook/useClickClose";
 import { AuthenticationContext } from "../../../contexts/UserContext/AuthContext";
-
-export interface IDataCreateTech {
-  title: string;
-  status: string;
-}
-
-export interface IRef {
-  ref?:
-    | ((instance: HTMLDivElement | null) => void)
-    | React.RefObject<HTMLDivElement>
-    | null
-    | undefined
-    | string;
-}
 
 export const ModalRegisterTech = () => {
   const { setCurrentModal } = useContext(AuthenticationContext);
@@ -33,7 +22,7 @@ export const ModalRegisterTech = () => {
   const modalRef = useClickClose(() => {
     setCurrentModal(false);
   });
-  const { register, handleSubmit } = useForm<IDataCreateTech>({
+  const { register, handleSubmit } = useForm<ICreateTechs>({
     resolver: yupResolver(formTechSchema),
   });
 

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useContext } from "react";
 import { AuthenticationContext } from "../../../contexts/UserContext/AuthContext";
 
@@ -10,8 +11,9 @@ export const UserInformation = () => {
     <div>
       <>
         <StyledTitleOne fontSize={24} color={`${"var(--grey-0)"}`}>
-          Olá, {user?.name}
+          Olá,{user?.name}
         </StyledTitleOne>
+
         <StyledHeadline fontSize={12} color={`${"var(--grey-1)"}`}>
           {user?.course_module}
         </StyledHeadline>
