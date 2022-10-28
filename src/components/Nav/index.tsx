@@ -10,7 +10,12 @@ export const Nav = () => {
     <StyledNav>
       <div>
         <Img src={LogoHub} width={130} alt={"Logo kenzie hub"} />
-        <ButtonExit type={"button"} onClick={() => userLogout()}>
+        <ButtonExit
+          type={"button"}
+          onClick={() => {
+            userLogout();
+          }}
+        >
           Sair
         </ButtonExit>
       </div>

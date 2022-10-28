@@ -2,21 +2,45 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { ILoginPage } from "../../pages/LoginPage";
-import { IRegisterPage } from "../../pages/RegisterPage";
 import { api } from "../../services/api";
-import { IUser, loginRequest } from "../../services/loginRequest ";
 import { registerRequest } from "../../services/registerRequest";
 import axios from "axios";
 import { autoLogin } from "../../services/autoLogin";
 interface IAuthenticationProviderProps {
   children: ReactNode;
 }
+export interface ITech {
+  id: string;
+  status: string;
+  title: string;
+}
 
-interface IAuthenticationContext {
-  user: IUser | null;
-  handleLogin: (dataLogin: ILoginPage) => Promise<void>;
-  handleRegister: (dataRegister: IRegisterPage) => Promise<void>;
+export interface IUser {
+  name?: string;
+  id?: string;
+  email: string;
+  password: string;
+  confirmpassword?: string;
+  course_module?: string;
+  contact?: string;
+  bio?: string;
+  techs?: ITech[];
+}
+
+export interface IUserLogin {
+  email: string;
+  password: string;
+}
+
+export interface ILoginRegister {
+  user: IUser;
+  token: string;
+}
+
+export interface IAuthenticationContext {
+  user: IUser;
+  handleLogin: (dataUser: IUser) => void;
+  handleRegister: (dataRegister: IUser) => void;
   loading: boolean;
   userLogout: () => void;
   currentModal: boolean;
@@ -29,7 +53,8 @@ export const AuthenticationContext = createContext<IAuthenticationContext>(
 export const AuthenticationProvider = ({
   children,
 }: IAuthenticationProviderProps) => {
-  const [user, setUser] = useState<IUser | null>({} as IUser);
+  //
+  const [user, setUser] = useState<IUser>({} as IUser);
   const [currentModal, setCurrentModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -40,29 +65,35 @@ export const AuthenticationProvider = ({
       if (token) {
         try {
           api.defaults.headers.common.authorization = ` Bearer ${token}`;
-          const response = await autoLogin();
-          setUser(response.user);
+          const { data } = await api.get<IUser>("/profile");
+
+          setUser(data);
         } catch (error) {
           if (axios.isAxiosError(error)) {
             toast.error(`${error.response?.data.message}`, {
               position: toast.POSITION.TOP_RIGHT,
               toastId: 1,
             });
+            console.error(error);
+            console.log("redirecionada para login");
+            localStorage.removeItem("@KENZIEHUB:TOKEN");
+            navigate("/");
           }
-          console.error(error);
-          localStorage.removeItem("@KENZIEHUB:TOKEN");
-          navigate("/");
         }
       }
       setLoading(false);
     }
-    loadUser();
-  }, []);
 
-  const handleLogin = async (data: ILoginPage) => {
+    loadUser();
+  }, [loading]);
+
+  const handleLogin = async (dataUser: IUserLogin) => {
     try {
-      const response = await loginRequest(data);
-      setUser(response.user);
+      const { data } = await api.post<ILoginRegister>("/sessions", dataUser);
+      window.localStorage.setItem("@KENZIEHUB:TOKEN", data.token);
+      api.defaults.headers.common.authorization = ` Bearer ${data.token}`;
+      setUser(data.user);
+      setLoading(true);
 
       navigate("/dashbord", { replace: true });
     } catch (error) {
@@ -76,9 +107,9 @@ export const AuthenticationProvider = ({
     }
   };
 
-  const handleRegister = async (dataRegister: IRegisterPage) => {
+  const handleRegister = async (dataRegister: IUser) => {
     try {
-      const response = registerRequest(dataRegister);
+      const response = await registerRequest(dataRegister);
       toast.success("Conta criada com sucesso!");
       navigate("/");
       console.log(response);
@@ -94,7 +125,7 @@ export const AuthenticationProvider = ({
   };
 
   const userLogout = () => {
-    setUser(null);
+    //setUser(null);
     setLoading(false);
     localStorage.removeItem("@KENZIEHUB:TOKEN");
     navigate("/");

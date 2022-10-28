@@ -1,9 +1,4 @@
 import { useEffect, useRef } from "react";
-import { IRef } from "../components/Modal/RegisterTech";
-
-interface ICallback {
-  callback: () => void;
-}
 
 export const useClickClose = (callback: () => void) => {
   const ref = useRef<HTMLDivElement>(null);

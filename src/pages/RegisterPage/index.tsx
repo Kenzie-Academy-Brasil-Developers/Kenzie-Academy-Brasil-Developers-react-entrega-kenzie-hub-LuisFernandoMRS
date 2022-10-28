@@ -22,17 +22,10 @@ import { Label } from "../../components/Label";
 import { StyledInput } from "../../components/Input/style";
 import { ButtonRegister } from "../../components/Button";
 import { useContext } from "react";
-import { AuthenticationContext } from "../../contexts/UserContext/AuthContext";
-
-export interface IRegisterPage {
-  name: string;
-  email: string;
-  password: string;
-  confirmpassword: string;
-  bio: string;
-  contact: string;
-  course_module: string;
-}
+import {
+  AuthenticationContext,
+  IUser,
+} from "../../contexts/UserContext/AuthContext";
 
 export const RegisterPage = () => {
   const { handleRegister } = useContext(AuthenticationContext);
@@ -40,7 +33,7 @@ export const RegisterPage = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<IRegisterPage>({
+  } = useForm<IUser>({
     resolver: yupResolver(formRegisterSchema),
   });
 

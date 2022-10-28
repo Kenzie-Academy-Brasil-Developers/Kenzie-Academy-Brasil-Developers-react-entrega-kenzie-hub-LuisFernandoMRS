@@ -5,8 +5,10 @@ import { Nav } from "../../components/Nav";
 import { AuthenticationContext } from "../../contexts/UserContext/AuthContext";
 
 export const Dashbord = () => {
-  const { user } = useContext(AuthenticationContext);
-
+  const { user, loading } = useContext(AuthenticationContext);
+  if (loading) {
+    return null;
+  }
   return (
     <>
       {!user ? (

@@ -1,8 +1,9 @@
+import { ILoginRegister } from "../contexts/UserContext/AuthContext";
 import { api } from "./api";
-import { IResponse } from "./loginRequest ";
 
-export const autoLogin = async (): Promise<IResponse> => {
-  const { data } = await api.get<IResponse>("/profile");
+export const autoLogin = async (token: string): Promise<ILoginRegister> => {
+  api.defaults.headers.common.authorization = ` Bearer ${token}`;
+  const { data } = await api.get<ILoginRegister>("/profile");
 
   return data;
 };
